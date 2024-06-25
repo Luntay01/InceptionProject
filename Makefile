@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all build up down clean
 
 all: build up
 
@@ -12,4 +12,9 @@ down:
 	docker-compose -f srcs/docker-compose.yml down
 
 clean: down
-	docker-compose -f srcs/docker-compose.yml rm -f
+	docker system prune -af
+	if [ "$(docker volume ls -q)" ]; then \
+		docker volume rm $(docker volume ls -q); \
+	else \
+		echo "No volumes to remove"; \
+	fi
