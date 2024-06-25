@@ -1,55 +1,36 @@
-version: "3.8"
+version: '3.9'
 
 services:
-  nginx:
-    build: requirements/nginx/.
-    container_name: nginx
-    depends_on:
-      - wordpress
-      - mariadb
-    ports:
-      - "443:443"
-    environment:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-      - CERTS_CRT=${CERTS_CRT}
-      - CERTS_KEY=${CERTS_KEY}
-      - PHP_HOST=${PHP_HOST}
-      - PHP_PORT=${PHP_PORT}
+  mariadb:
+    build: requirements/mariadb/.
+    container_name: mariadb
+    env_file: .env
     volumes:
-      - ./web:/var/www/html
-      - ./requirements/nginx/ssl:/etc/nginx/ssl
+      - ./database:/var/lib/mysql
     networks:
       - inception
 
   wordpress:
     build: requirements/wordpress/.
-    container_name: wp-php
+    container_name: wordpress
     depends_on:
       - mariadb
-    environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_HOST=mariadb
-      - WP_ADMIN_USER=${WP_USER}
-      - WP_ADMIN_PASSWORD=${WP_PASSWORD}
-      - WP_ADMIN_EMAIL=${WP_EMAIL}
-      - DOMAIN_NAME=${DOMAIN_NAME}
+    env_file: .env
     volumes:
       - ./web:/var/www/html
     networks:
       - inception
 
-  mariadb:
-    build: requirements/mariadb/.
-    container_name: mariadb
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+  nginx:
+    build: requirements/nginx/.
+    container_name: nginx
+    depends_on:
+      - wordpress
+    env_file: .env
+    ports:
+      - "443:443"
     volumes:
-      - ./database:/var/lib/mysql
+      - ./web:/var/www/html
     networks:
       - inception
 
