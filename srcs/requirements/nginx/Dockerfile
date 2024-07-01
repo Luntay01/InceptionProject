@@ -1,23 +1,21 @@
-FROM alpine:3.17
+FROM debian:buster
 
-# NGINX
-RUN apk update && apk upgrade && \
-    apk add nginx && \
-	apk add curl && \
-    mkdir -p /var/www/html/
-COPY ./default /etc/nginx/http.d/nginx.conf
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt-get install -y nginx \
+    openssl \
+    curl && \
+    mkdir -p /etc/nginx/ssl && \
+    mkdir -p /run/nginx && \
+    chown -R www-data /var/lib/nginx && \
+    rm -rf /etc/nginx/sites-available/default
 
-# OPENSSL
-RUN apk add openssl && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-        -keyout /etc/ssl/private/nginx-selfsigned.key \
-        -out /etc/ssl/certs/nginx-selfsigned.crt \
-        -subj "/C=AU/ST=South Australia/L=Adelaide/O=42Network/OU=student/CN=nginx_host_example"
+COPY ./conf/default.conf /etc/nginx/sites-available/default.conf
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+COPY ./tools/run.sh /tmp/run.sh
 
-RUN adduser -D -g 'www' www && \
-    chown -R www:www /run/nginx/ && \
-    chown -R www:www /var/www/html/
+RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 EXPOSE 443
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT [ "sh", "/tmp/run.sh" ]

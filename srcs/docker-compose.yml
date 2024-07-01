@@ -1,59 +1,57 @@
 version: '3.7'
 
 services:
-  nginx:
-    container_name: nginx
-    build: ./requirements/nginx/
-    image: nginx:inception
-    env_file: .env
-    networks:
-      - inception
-    ports:
-      - "443:443"
-    restart: always
-    volumes:
-      - wordpress-data:/var/www/html/
-    depends_on:
-      - wordpress
-
   mariadb:
+    build: requirements/mariadb
+    image: mariadb
     container_name: mariadb
-    build: ./requirements/mariadb/
-    image: mariadb:inception
     env_file: .env
+    volumes:
+      - mariadb:/var/lib/mysql
+    restart: on-failure
     networks:
       - inception
-    restart: always
-    volumes:
-      - mariadb-data:/var/lib/mysql/
 
   wordpress:
-    container_name: wordpress
-    build: ./requirements/wordpress/
-    image: wordpress:inception
-    env_file: .env
-    networks:
-      - inception
-    restart: always
-    volumes:
-      - wordpress-data:/var/www/html/
+    build: requirements/wordpress
+    image: wordpress
     depends_on:
       - mariadb
+    container_name: wordpress
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
+    restart: on-failure
+    networks:
+      - inception
+
+  nginx:
+    build: requirements/nginx
+    image: nginx
+    depends_on:
+      - wordpress
+    container_name: nginx
+    env_file: .env
+    volumes:
+      - wordpress:/var/www/wordpress
+    ports:
+      - "443:443"
+    restart: on-failure
+    networks:
+      - inception
 
 networks:
   inception:
     driver: bridge
 
 volumes:
-  mariadb-data:
-    driver: local
+  mariadb:
     driver_opts:
       type: none
+      device: /home/user/data/mysql
       o: bind
-      device: /home/user/InceptionProject/srcs/database/mysql
-  wordpress-data:
-    driver: local
+  wordpress:
     driver_opts:
       type: none
+      device: /home/user/data/html
       o: bind
-      device: /home/user/InceptionProject/srcs/web/html
