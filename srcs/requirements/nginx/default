@@ -1,30 +1,18 @@
 server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    server_name $DOMAIN_NAME;
+    listen 80;
+    server_name kmordaun.42.fr;
 
-    location / {
-        return 301 https://$host$request_uri;
-    }
-}
-
-server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    server_name $DOMAIN_NAME;
-
-    ssl_certificate $CERTS_CRT;
-    ssl_certificate_key $CERTS_KEY;
-
-    root /var/www/html;
+    root /var/www/html/wordpress;
     index index.php index.html index.htm;
 
     location / {
-        try_files $uri $uri/ =404;
+        try_files $uri $uri/ /index.php?$args;
     }
 
     location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass $PHP_HOST:$PHP_PORT;
+        include fastcgi_params;
+        fastcgi_pass wordpress:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 }
