@@ -1,18 +1,24 @@
 .PHONY: hosts all install build up start down remove re list images delete
 
-NAME=inception
-DOCC=docker-compose
-DOCKER_PATH=/usr/bin/docker-compose
-
-all: create_vol build up
+all: clean host install create_vol build up
 
 host:
-	sudo sed -i 's|localhost|kmordaun.42.fr|g' /etc/hosts
+	@if ! grep -q "kmordaun.42.fr" /etc/hosts; then \
+		sudo sed -i 's|localhost|kmordaun.42.fr|g' /etc/hosts; \
+		echo "Host file updated"; \
+	else \
+		echo "Host already set"; \
+	fi
 
 install:
-	sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o $(DOCKER_PATH)
-	sudo chown $(USER) $(DOCKER_PATH)
-	sudo chmod 777 $(DOCKER_PATH)
+	@if [ ! -f /usr/bin/docker-compose ]; then \
+		curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose; \
+		sudo chown $(USER) /usr/bin/docker-compose; \
+		sudo chmod 777 /usr/bin/docker-compose; \
+		echo "Docker Compose installed"; \
+	else \
+		echo "Docker Compose already installed"; \
+	fi
 
 build:
 	$(DOCC) -f ./srcs/$(DOCC).yml build
@@ -29,13 +35,24 @@ create_vol:
 	sudo chmod -R 777 $(HOME)/data
 
 up:
-	$(DOCC) -f ./srcs/$(DOCC).yml up -d
+	docker-compose -f ./srcs/docker-compose.yml up -d
 
 start:
-	$(DOCC) -f ./srcs/$(DOCC).yml start
+	docker-compose -f ./srcs/docker-compose.yml start
+
+stop:
+	docker-compose -f ./srcs/docker-compose.yml stop
 
 down:
-	$(DOCC) -f ./srcs/$(DOCC).yml down
+	@if docker network ls | grep -q "srcs_inception"; then \
+		docker-compose -f ./srcs/docker-compose.yml down; \
+	else \
+		echo "Network currently down"; \
+	fi
+
+clean: down
+	docker system prune -af || true
+	if [ "$$(docker volume ls -q)" != "" ]; then docker volume rm $$(docker volume ls -q); fi || true
 
 remove:
 	sudo chown -R $(USER) $(HOME)/data
@@ -59,4 +76,7 @@ delete:
 	docker system prune -a
 
 logs:
-	cd srcs && docker-compose logs mariadb wordpress nginx
+	docker-compose -f ./srcs/docker-compose.yml logs mariadb
+	docker-compose -f ./srcs/docker-compose.yml logs wordpress
+	docker-compose -f ./srcs/docker-compose.yml logs nginx
+

@@ -1,5 +1,16 @@
+#Specifies the version of the Docker Compose file format to use
 version: '3.7'
 
+#services:Defines the individual services that make up your application.
+#build: Specifies the directory containing the Dockerfile to build the image.
+#image: Names the Docker image. If it doesn't exist locally, Docker will try to build it.
+#container_name: The name of the container when it runs.
+#env_file: The file containing environment variables.
+#volumes: Mounts a named volume to persist data in location dir.
+#restart: Automatically restarts the container if it fails, but not if it stops normally or is restarted manually.
+#networks: Connects the service to the inception network
+#depends_on: Ensures a certain service starts before this one.
+#ports: Maps port 443 on the host to port 443 on the container for SSL traffic.
 services:
   mariadb:
     build: requirements/mariadb
@@ -40,10 +51,16 @@ services:
     networks:
       - inception
 
+#this configuration creates a custom network called inception. 
+#if the network does not already exist, Docker Compose will create it.
+#the bridge driver is the default network driver in docker and provides 
+#a simple way for containers to communicate on the same host
 networks:
   inception:
     driver: bridge
 
+#Creates Bind Mounts: This configuration sets up bind mounts rather than named volumes. 
+#Bind mounts link a specific directory on the host machine to a directory inside the container.
 volumes:
   mariadb:
     driver_opts:

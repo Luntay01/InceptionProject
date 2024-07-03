@@ -1,5 +1,7 @@
 FROM debian:buster
 
+#openssl:Secure Sockets Layer Generating Private Keys: Creating cryptographic keys for secure communications.
+#Creating SSL/TLS Certificates: Self-signing certificates for secure connections.
 RUN apt update -yq && \
     apt upgrade -yq && \
     apt install -yq nginx && \
@@ -14,6 +16,8 @@ COPY ./conf/default.conf /etc/nginx/sites-available/default.conf
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 COPY ./tools/run.sh /tmp/run.sh
 
+#Symbolic Link (symlink): A special type of file that points to another file or directory. 
+#In this case, it allows NGINX to use the configuration file located in sites-available without copying it to sites-enabled.
 RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 EXPOSE 443

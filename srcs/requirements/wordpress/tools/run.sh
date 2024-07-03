@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sed -i 's|PHP_PORT|'${PHP_PORT}'|g' /etc/php/7.3/fpm/pool.d/www.conf
+sed -i 's/PHP_PORT/'${PHP_PORT}'/g' /etc/php/7.3/fpm/pool.d/www.conf
 
 if [ -f "/var/www/wordpress/wp-config.php" ]
 then
@@ -12,7 +12,7 @@ else
   wp core download --path=$WP_PATH --allow-root
   wp config create --dbname=$MYSQL_DATABASE --dbuser=$MYSQL_USER --dbpass=$MYSQL_PASSWORD --dbhost=mariadb --path=$WP_PATH --skip-check --allow-root
   if [ $? -ne 0 ]; then
-    echo "Manual wp-config.php creation"
+    echo "wp-config.php creation"
     cp /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
     sed -i "s/database_name_here/$MYSQL_DATABASE/" /var/www/wordpress/wp-config.php
     sed -i "s/username_here/$MYSQL_USER/" /var/www/wordpress/wp-config.php

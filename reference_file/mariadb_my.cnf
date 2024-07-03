@@ -1,0 +1,4 @@
+#the server reads the configuration from my.cnf when it starts and applys the specified port and bind-address settings
+[mysqld]
+port=MYSQL_PORT
+bind-address=MYSQL_ADDRESS
