@@ -20,8 +20,9 @@ else
     sed -i "s/localhost/mariadb/" /var/www/wordpress/wp-config.php
   fi
   wp core install --path=$WP_PATH --url=$DOMAIN_NAME --title=$WP_TITLE --admin_user=$WP_USER --admin_password=$WP_PASSWORD --admin_email=$WP_EMAIL --skip-email --allow-root
-  wp theme install teluro --path=$WP_PATH --activate --allow-root
-  wp user create leon leon@le.on --role=author --path=$WP_PATH --user_pass=leon --allow-root
+  wp theme install twentytwentyfour --path=$WP_PATH --activate --allow-root
+  wp theme activate twentytwentyfour --path=$WP_PATH --allow-root
+  wp user create kyle kyle@ky.le --role=author --path=$WP_PATH --user_pass=kyle --allow-root
 fi
 
 /usr/sbin/php-fpm7.3 -F

@@ -21,7 +21,7 @@ install:
 	fi
 
 build:
-	$(DOCC) -f ./srcs/$(DOCC).yml build
+	docker-compose -f ./srcs/docker-compose.yml build
 
 rm_vol:
 	sudo chown -R $(USER) $(HOME)/data
