@@ -1,3 +1,9 @@
+#add a user so they dont need to type sudo anymore
+sudo visudo
+your_username ALL=(ALL) NOPASSWD:ALL
+#or change it just for a specific commands
+user ALL=(ALL) NOPASSWD:/usr/bin/docker-compose
+
 docker stop $(docker ps -qa); docker rm $(docker ps -qa); docker rmi -f $(docker images -qa); docker volume rm $(docker volume ls -q); docker network rm $(docker network ls -q) 2>/dev/null
 grep -E "network: host|links:" ./srcs/docker-compose.yml
 
@@ -59,7 +65,7 @@ cat default.conf
 nginx -t
 nginx -s reload
 #and then this in regular bash also verifys ssl or when you try connect for the first tim there should be a warning for selfsigned ssl's
-openssl s_client -connect kmordaun.42.fr:443 -tls1_2
+openssl s_client -connect kmordaun.42.fr:443 -tls1_2+
 openssl s_client -connect kmordaun.42.fr:443 -tls1_3
 
 
