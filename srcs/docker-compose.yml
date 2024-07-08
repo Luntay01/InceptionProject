@@ -65,10 +65,10 @@ volumes:
   mariadb:
     driver_opts:
       type: none
-      device: /home/user/data/mysql
+      device: /home/kmordaun/data/mysql
       o: bind
   wordpress:
     driver_opts:
       type: none
-      device: /home/user/data/html
+      device: /home/kmordaun/data/html
       o: bind
