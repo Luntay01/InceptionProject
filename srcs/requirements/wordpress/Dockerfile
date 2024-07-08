@@ -15,8 +15,8 @@ RUN apt update -yq && \
     mkdir -p /run/php
 
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/
-COPY ./tools/run.sh /tmp/
+COPY ./tools/script.sh /tmp/
 
-RUN chmod +x /tmp/run.sh
+RUN chmod +x /tmp/script.sh
 
-ENTRYPOINT [ "sh", "/tmp/run.sh" ]
+ENTRYPOINT [ "sh", "/tmp/script.sh" ]

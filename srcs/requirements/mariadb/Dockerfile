@@ -8,7 +8,7 @@ RUN apt update -yq && \
     chown -R mysql:mysql /var/run/mysqld && \
     chown -R mysql:mysql /etc/mysql/
 
-COPY ./tools/run.sh /tmp/
+COPY ./tools/script.sh /tmp/
 COPY ./conf/init.sql /tmp/
 COPY ./conf/my.cnf /etc/mysql
 
@@ -17,4 +17,4 @@ RUN chown -R mysql:mysql /tmp/ && \
 
 USER mysql
 
-ENTRYPOINT ["sh", "/tmp/run.sh"]
+ENTRYPOINT ["sh", "/tmp/script.sh"]

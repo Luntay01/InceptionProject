@@ -12,10 +12,10 @@ RUN apt update -yq && \
 
 COPY ./conf/default.conf /etc/nginx/sites-available/default.conf
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
-COPY ./tools/run.sh /tmp/run.sh
+COPY ./tools/script.sh /tmp/script.sh
 
 RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 EXPOSE 443
 
-ENTRYPOINT [ "sh", "/tmp/run.sh" ]
+ENTRYPOINT [ "sh", "/tmp/script.sh" ]
